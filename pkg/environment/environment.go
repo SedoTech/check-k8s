@@ -23,7 +23,7 @@ var envMap = map[string]string{
 func (s *EnvSettings) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&s.KubeContext, "kube-context", "", "name of the kubeconfig context to use")
 	fs.BoolVar(&s.Debug, "debug", false, "enable verbose output")
-	fs.BoolVarP(&s.Debug, "verbose", "v", false, "enable verbose output")
+	fs.(&s.Debug, "verbose", "v", false, "enable verbose output")
 }
 
 // Init sets values from the environment.

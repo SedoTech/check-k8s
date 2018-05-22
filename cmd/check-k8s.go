@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/print"
+	"github.com/benkeil/check-k8s/pkg/print"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/icinga"
+	"github.com/benkeil/check-k8s/pkg/icinga"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/checks"
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/environment"
+	"github.com/benkeil/check-k8s/pkg/checks"
+	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
 )
 

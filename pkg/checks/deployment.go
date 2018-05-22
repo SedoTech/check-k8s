@@ -3,11 +3,11 @@ package checks
 import (
 	"fmt"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/icinga"
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/print"
+	"github.com/benkeil/check-k8s/pkg/icinga"
+	"github.com/benkeil/check-k8s/pkg/print"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/environment"
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/kube"
+	"github.com/benkeil/check-k8s/pkg/environment"
+	"github.com/benkeil/check-k8s/pkg/kube"
 	"k8s.io/api/apps/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

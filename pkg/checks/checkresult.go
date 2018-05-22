@@ -3,7 +3,7 @@ package checks
 import (
 	"fmt"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/icinga"
+	"github.com/benkeil/check-k8s/pkg/icinga"
 )
 
 type (

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"io"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/print"
+	"github.com/benkeil/check-k8s/pkg/print"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/kube"
+	"github.com/benkeil/check-k8s/pkg/kube"
 	"github.com/spf13/cobra"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"io"
 
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/checks"
-	"git.i.sedorz.net/infrastructure/icinga/check-k8s/pkg/icinga"
+	"github.com/benkeil/check-k8s/pkg/checks"
+	"github.com/benkeil/check-k8s/pkg/icinga"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
