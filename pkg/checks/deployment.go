@@ -1,22 +1,17 @@
 package checks
 
 import (
-	"fmt"
-
-	"github.com/benkeil/check-k8s/pkg/icinga"
-	"github.com/benkeil/check-k8s/pkg/print"
-
 	"github.com/benkeil/check-k8s/pkg/environment"
-	"github.com/benkeil/check-k8s/pkg/kube"
+	"github.com/benkeil/check-k8s/pkg/print"
+	"github.com/benkeil/icinga-checks-library"
 	"k8s.io/api/apps/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type (
 	// CheckDeployment interface to check a deployment
 	CheckDeployment interface {
 		//CheckUpdateStrategy() ServiceCheckResult
-		CheckAvailableReplicas(string, string) ServiceCheckResult
+		CheckAvailableReplicas(string, string) icinga.Result
 		//CheckAll() ServiceCheckResults
 		PrintYaml()
 	}
@@ -28,27 +23,14 @@ type (
 	}
 )
 
-// NewCheckDeployment returns a new checkDeployment object
-func NewCheckDeployment(settings environment.EnvSettings, name string) (CheckDeployment, error) {
-	client, err := kube.GetKubeClient(settings.KubeContext)
-	if err != nil {
-		return nil, err
-	}
-	resource, err := client.AppsV1().Deployments("production-mls").Get(name, meta_v1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-	return &checkDeploymentImpl{settings, name, resource}, nil
-}
-
 // CheckUpdateStrategy checks if the deployment has the RollingUpdate strategy
-func (c *checkDeploymentImpl) CheckUpdateStrategy() ServiceCheckResult {
-	name := "Deployment.Spec.Strategy.Type"
+func (c *checkDeploymentImpl) CheckUpdateStrategy() icinga.Result {
+	//name := "Deployment.Spec.Strategy.Type"
 	updateStretegy := c.deployment.Spec.Strategy.Type
 	if updateStretegy != v1.RollingUpdateDeploymentStrategyType {
-		return NewServiceCheckResult(name, icinga.ServiceStateWarning, fmt.Sprintf("deployment has update strategy %s", updateStretegy))
+		//return NewServiceCheckResult(name, icinga.ServiceStateWarning, fmt.Sprintf("deployment has update strategy %s", updateStretegy))
 	}
-	return NewServiceCheckResultOk(name)
+	return nil
 }
 
 // CheckSpecReplicas checks if the deployment has a minimum of replicas specified
@@ -63,14 +45,16 @@ func (c *checkDeploymentImpl) CheckUpdateStrategy() ServiceCheckResult {
 //}
 
 // CheckAvailableReplicas checks if the deployment has a minimum of available replicas
-func (c *checkDeploymentImpl) CheckAvailableReplicas(tw string, tc string) ServiceCheckResult {
-	name := "Deployment.Status.AvailableReplicas"
-	minimum := c.options.MinimumAvailableReplicas
+func (c *checkDeploymentImpl) CheckAvailableReplicas(tw string, tc string) icinga.Result {
+	//name := "Deployment.Status.AvailableReplicas"
+	//minimum := c.options.MinimumAvailableReplicas
+	minimum := int32(4)
 	replicas := c.deployment.Status.AvailableReplicas
 	if replicas < minimum {
-		return NewServiceCheckResult(name, icinga.ServiceStateWarning, fmt.Sprintf("deployment has %v of minimum %v available replicas", replicas, minimum))
+		//return NewServiceCheckResult(name, icinga.ServiceStateWarning, fmt.Sprintf("deployment has %v of minimum %v available replicas", replicas, minimum))
 	}
-	return NewServiceCheckResultOk(name)
+	//return NewServiceCheckResultOk(name)
+	return nil
 }
 
 // CheckAll runs all tests and returns an instance of ServiceCheckResults

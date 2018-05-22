@@ -4,11 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/print"
-
-	"github.com/benkeil/check-k8s/pkg/kube"
 	"github.com/spf13/cobra"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type checkEndpointCmd struct {
@@ -42,16 +38,16 @@ func newCheckEndpointCmd(out io.Writer) *cobra.Command {
 }
 
 func (c *checkEndpointCmd) run() error {
-	client, err := kube.GetKubeClient(settings.KubeContext)
-	if err != nil {
-		return err
-	}
-	resource, err := client.CoreV1().Endpoints(c.namespace).Get(c.name, meta_v1.GetOptions{})
-	//labelSelector := labels.Set(map[string]string{"mylabel": "ourdaomain1"}).AsSelector()
-	//resource, err := client.CoreV1().Endpoints(c.namespace).List(meta_v1.ListOptions{})
-	if err != nil {
-		return err
-	}
-	print.Fyaml(c.out, resource)
+	//client, err := kube.GetKubeClient(settings.KubeContext)
+	//if err != nil {
+	//	return err
+	//}
+	//resource, err := client.CoreV1().Endpoints(c.namespace).Get(c.name, meta_v1.GetOptions{})
+	////labelSelector := labels.Set(map[string]string{"mylabel": "ourdaomain1"}).AsSelector()
+	////resource, err := client.CoreV1().Endpoints(c.namespace).List(meta_v1.ListOptions{})
+	//if err != nil {
+	//	return err
+	//}
+	//print.Fyaml(c.out, resource)
 	return nil
 }

@@ -8,8 +8,8 @@ import (
 
 // EnvSettings describes all of the environment settings.
 type EnvSettings struct {
-	// Debug indicates whether or not Helm is running in Debug mode.
-	Debug bool
+	// Verbose indicates the level of additional debug output
+	Verbose int
 	// KubeContext is the name of the kubeconfig context.
 	KubeContext string
 }
@@ -22,8 +22,7 @@ var envMap = map[string]string{
 // AddFlags binds flags to the given flagset.
 func (s *EnvSettings) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&s.KubeContext, "kube-context", "", "name of the kubeconfig context to use")
-	fs.BoolVar(&s.Debug, "debug", false, "enable verbose output")
-	fs.(&s.Debug, "verbose", "v", false, "enable verbose output")
+	fs.CountVarP(&s.Verbose, "verbose", "v", "enable verbose output")
 }
 
 // Init sets values from the environment.

@@ -4,11 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/print"
-
-	"github.com/benkeil/check-k8s/pkg/kube"
 	"github.com/spf13/cobra"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type checkPodCmd struct {
@@ -42,14 +38,14 @@ func newCheckPodCmd(out io.Writer) *cobra.Command {
 }
 
 func (c *checkPodCmd) run() error {
-	client, err := kube.GetKubeClient(settings.KubeContext)
-	if err != nil {
-		return err
-	}
-	resource, err := client.CoreV1().Pods(c.namespace).List(meta_v1.ListOptions{})
-	if err != nil {
-		return err
-	}
-	print.Fyaml(c.out, resource)
+	//client, err := kube.GetKubeClient(settings.KubeContext)
+	//if err != nil {
+	//	return err
+	//}
+	//resource, err := client.CoreV1().Pods(c.namespace).List(meta_v1.ListOptions{})
+	//if err != nil {
+	//	return err
+	//}
+	//print.Fyaml(c.out, resource)
 	return nil
 }

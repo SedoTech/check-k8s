@@ -4,50 +4,44 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/checks"
-	"github.com/benkeil/check-k8s/pkg/icinga"
+	"github.com/benkeil/check-k8s/pkg/print"
 
+	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
+	"k8s.io/api/apps/v1"
 )
 
 type (
 	checkDeploymentCmd struct {
-		version string
-		out     io.Writer
-		name    string
-		options *checks.CheckDeploymentOptions
-	}
-
-	// CheckDeploymentOptions contains options and flags from the command line
-	CheckDeploymentOptions struct {
-		Namespace                string
-		MinimumSpecReplicas      int32
-		MinimumAvailableReplicas int32
+		out                       io.Writer
+		Deployment                *v1.Deployment
+		Name                      string
+		Namespace                 string
+		AvailableReplicasWarning  string
+		AvailableReplicasCritical string
 	}
 )
 
-// AddFlags binds flags to the given flagset.
-func (c *CheckDeploymentOptions) AddFlags(fs *pflag.FlagSet) {
-	fs.StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
-	fs.Int32Var(&c.MinimumSpecReplicas, "minimumSpecReplicas", 2, "minimum of replicas in spec")
-	fs.Int32Var(&c.MinimumAvailableReplicas, "minimumAvailableReplicas", 2, "minimum of available replicas")
-}
-
 func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
-	options := &CheckDeploymentOptions{}
-	c := &checkDeploymentCmd{out: out, options: options}
+	c := &checkDeploymentCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:   "deployment",
-		Short: "check if a k8s deployment resource is healthy",
-		//TraverseChildren: true,
+		Use:          "deployment",
+		Short:        "check if a k8s deployment resource is healthy",
 		SilenceUsage: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
 				return errors.New("deployment name is required")
 			}
-			c.name = args[0]
+			c.Name = args[0]
+			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+			if err != nil {
+				return err
+			}
+			c.Deployment = deployment
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
 			c.run()
 			return nil
 		},
@@ -56,17 +50,21 @@ func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
 		newCheckDeploymentAvailableReplicasCmd(out),
 	)
 
-	options.AddFlags(cmd.PersistentFlags())
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
+	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "minimum of replicas in spec")
+	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "minimum of available replicas")
+
 	cmd.MarkFlagRequired("namespace")
 
 	return cmd
 }
 
 func (c *checkDeploymentCmd) run() {
-	checkDeployment, err := checks.NewCheckDeployment(settings, c.name, *c.options)
-	if err != nil {
-		exitServiceState("NewCheckDeployment", icinga.ServiceStateUnknown, err)
-	}
-	//checkDeployment.PrintYaml()
-	exitServiceCheckResults(checkDeployment.CheckAll())
+	//checkDeployment, err := checks.NewCheckDeployment(settings, c.name, *c.options)
+	//if err != nil {
+	//	exitServiceState("NewCheckDeployment", icinga.ServiceStateUnknown, err)
+	//}
+	////checkDeployment.PrintYaml()
+	//exitServiceCheckResults(checkDeployment.CheckAll())
+	print.Yaml(c.Deployment)
 }

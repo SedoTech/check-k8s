@@ -4,9 +4,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/checks"
-	"github.com/benkeil/check-k8s/pkg/icinga"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -16,7 +13,7 @@ type (
 		version string
 		out     io.Writer
 		name    string
-		options *checks.CheckDeploymentOptions
+		options *CheckDeploymentAvailableReplicasOptions
 	}
 
 	// CheckDeploymentAvailableReplicasOptions contains options and flags from the command line
@@ -29,9 +26,8 @@ type (
 
 // AddFlags binds flags to the given flagset.
 func (c *CheckDeploymentAvailableReplicasOptions) AddFlags(fs *pflag.FlagSet) {
-	fs.StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
-	fs.StringVar(&c.ThresholdCritical, "c", "1:", "minimum of replicas in spec")
-	fs.StringVar(&c.ThresholdWarning, "w", "1:", "minimum of available replicas")
+	fs.StringVarP(&c.ThresholdCritical, "critical", "c", "2:", "minimum of replicas in spec")
+	fs.StringVarP(&c.ThresholdWarning, "warning", "w", "2:", "minimum of available replicas")
 }
 
 func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
@@ -39,9 +35,8 @@ func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
 	c := &checkDeploymentAvailableReplicasCmd{out: out, options: options}
 
 	cmd := &cobra.Command{
-		Use:   "availableReplicas",
-		Short: "check if a k8s deployment has enough available replicas",
-		//TraverseChildren: true,
+		Use:          "availableReplicas",
+		Short:        "check if a k8s deployment has enough available replicas",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
@@ -60,9 +55,9 @@ func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
 }
 
 func (c *checkDeploymentAvailableReplicasCmd) run() {
-	checkDeployment, err := checks.NewCheckDeployment(settings, c.name, *c.options)
-	if err != nil {
-		exitServiceState("NewCheckDeployment", icinga.ServiceStateUnknown, err)
-	}
-	exitServiceCheckResult(checkDeployment.CheckAvailableReplicas())
+	//checkDeployment, err := checks.NewCheckDeployment(settings, c.name, *c.options)
+	//if err != nil {
+	//	exitServiceState("NewCheckDeployment", icinga.ServiceStateUnknown, err)
+	//}
+	//exitServiceCheckResult(checkDeployment.CheckAvailableReplicas())
 }

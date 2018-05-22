@@ -5,9 +5,8 @@ import (
 
 	"github.com/benkeil/check-k8s/pkg/print"
 
-	"github.com/benkeil/check-k8s/pkg/icinga"
+	"github.com/benkeil/icinga-checks-library"
 
-	"github.com/benkeil/check-k8s/pkg/checks"
 	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
 )
@@ -45,7 +44,6 @@ func newRootCmd(args []string) *cobra.Command {
 
 	cmd.AddCommand(
 		// check commands
-		newCheckServiceCmd(out),
 		newCheckDeploymentCmd(out),
 		newCheckPodCmd(out),
 		newCheckEndpointCmd(out),
@@ -57,19 +55,19 @@ func newRootCmd(args []string) *cobra.Command {
 func init() {
 }
 
-func exitServiceState(name string, state icinga.ServiceState, err error) {
+func exitServiceState(name string, state icinga.Status, err error) {
 	print.Printfln("%s:%s: %s", name, state, err)
 	os.Exit(state.Ordinal())
 }
 
-func exitServiceCheckResult(result checks.ServiceCheckResult) {
-	print.Printfln("%s: %s", result.Name(), result.State(), result.Message())
-	os.Exit(result.State().Ordinal())
+func exitServiceCheckResult(result icinga.Result) {
+	print.Printfln("%s: %s", result.Name(), result.Status(), result.Message())
+	os.Exit(result.Status().Ordinal())
 }
 
-func exitServiceCheckResults(results checks.ServiceCheckResults) {
+func exitServiceCheckResults(results icinga.Results) {
 	for _, result := range results.All() {
-		print.Printfln("%s:%s: %s", result.Name(), result.State(), result.Message())
+		print.Printfln("%s:%s: %s", result.Name(), result.Status(), result.Message())
 	}
-	os.Exit(results.CalculateServiceState().Ordinal())
+	//os.Exit(results.CalculateServiceStatus().Ordinal())
 }

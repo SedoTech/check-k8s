@@ -12,4 +12,4 @@
 *.out
 
 vendor/
-checks-k8s
+check-k8s
