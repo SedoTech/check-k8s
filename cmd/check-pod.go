@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +15,7 @@ type checkPodCmd struct {
 	namespace string
 }
 
-func newCheckPodCmd(out io.Writer) *cobra.Command {
+func newCheckPodCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
 	c := &checkPodCmd{out: out}
 
 	cmd := &cobra.Command{

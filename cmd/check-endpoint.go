@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +15,7 @@ type checkEndpointCmd struct {
 	namespace string
 }
 
-func newCheckEndpointCmd(out io.Writer) *cobra.Command {
+func newCheckEndpointCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
 	c := &checkEndpointCmd{out: out}
 
 	cmd := &cobra.Command{

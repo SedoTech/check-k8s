@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/benkeil/icinga-checks-library"
   packages = ["."]
-  revision = "b7b7999b2dde3560211b4741d5e42eab48dca6f1"
+  revision = "ebde7c17fbefbc300ad3f3a3ddc39cd7d53748e5"
 
 [[projects]]
   name = "github.com/ghodss/yaml"

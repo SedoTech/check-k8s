@@ -4,10 +4,6 @@ import (
 	"errors"
 	"os"
 
-	"github.com/benkeil/check-k8s/pkg/print"
-
-	"github.com/benkeil/icinga-checks-library"
-
 	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
 )
@@ -45,32 +41,12 @@ func newRootCmd(args []string) *cobra.Command {
 
 	cmd.AddCommand(
 		// check commands
-		newCheckDeploymentCmd(out),
-		newCheckPodCmd(out),
-		newCheckEndpointCmd(out),
+		newCheckDeploymentCmd(settings, out),
+		newCheckPodCmd(settings, out),
+		newCheckEndpointCmd(settings, out),
 	)
 
 	return cmd
-}
-
-func init() {
-}
-
-func exitServiceState(name string, state icinga.Status, err error) {
-	print.Printfln("%s:%s: %s", name, state, err)
-	os.Exit(state.Ordinal())
-}
-
-func exitServiceCheckResult(result icinga.Result) {
-	print.Printfln("%s: %s", result.Name(), result.Status(), result.Message())
-	os.Exit(result.Status().Ordinal())
-}
-
-func exitServiceCheckResults(results icinga.Results) {
-	for _, result := range results.All() {
-		print.Printfln("%s:%s: %s", result.Name(), result.Status(), result.Message())
-	}
-	//os.Exit(results.CalculateServiceStatus().Ordinal())
 }
 
 // NameArgs returns an error if there are not exactly 1 arg containing the resource name.

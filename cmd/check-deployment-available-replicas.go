@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/checks"
+	"github.com/benkeil/check-k8s/pkg/checks/deployment"
+	"github.com/benkeil/check-k8s/pkg/environment"
 	icinga "github.com/benkeil/icinga-checks-library"
 
 	"github.com/benkeil/check-k8s/cmd/api"
@@ -23,7 +24,7 @@ type (
 	}
 )
 
-func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
+func newCheckDeploymentAvailableReplicasCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
 	c := &checkDeploymentAvailableReplicasCmd{out: out}
 
 	cmd := &cobra.Command{
@@ -52,7 +53,7 @@ func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
 }
 
 func (c *checkDeploymentAvailableReplicasCmd) run() {
-	checkDeployment := checks.NewCheckDeployment(c.Deployment)
-	result := checkDeployment.CheckAvailableReplicas(c.ThresholdWarning, c.ThresholdCritical)
+	checkDeployment := deployment.NewCheckDeployment(c.Deployment)
+	result := checkDeployment.CheckAvailableReplicas(deployment.CheckAvailableReplicasOptions{ThresholdWarning: c.ThresholdWarning, ThresholdCritical: c.ThresholdCritical})
 	result.Exit()
 }

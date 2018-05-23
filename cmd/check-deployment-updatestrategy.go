@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/benkeil/check-k8s/pkg/checks"
+	"github.com/benkeil/check-k8s/pkg/checks/deployment"
+	"github.com/benkeil/check-k8s/pkg/environment"
 	icinga "github.com/benkeil/icinga-checks-library"
 
 	"github.com/benkeil/check-k8s/cmd/api"
@@ -18,12 +19,12 @@ type (
 		Deployment     *v1.Deployment
 		Name           string
 		Namespace      string
-		ReturnStatus   string
+		Result         string
 		UpdateStrategy string
 	}
 )
 
-func newCheckDeploymentUpdateStrategyCmd(out io.Writer) *cobra.Command {
+func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
 	c := &checkDeploymentUpdateStrategyCmd{out: out}
 
 	cmd := &cobra.Command{
@@ -45,14 +46,14 @@ func newCheckDeploymentUpdateStrategyCmd(out io.Writer) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
-	cmd.Flags().StringVarP(&c.ReturnStatus, "result", "r", "WARNING", "the result state if the check fails")
+	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
 	cmd.Flags().StringVarP(&c.UpdateStrategy, "string", "s", "RollingUpdate", "the expected update strategy")
 
 	return cmd
 }
 
 func (c *checkDeploymentUpdateStrategyCmd) run() {
-	checkDeployment := checks.NewCheckDeployment(c.Deployment)
-	result := checkDeployment.CheckUpdateStrategy(c.UpdateStrategy, c.ReturnStatus)
+	checkDeployment := deployment.NewCheckDeployment(c.Deployment)
+	result := checkDeployment.CheckUpdateStrategy(deployment.CheckUpdateStrategyOptions{Result: c.Result, UpdateStrategy: c.UpdateStrategy})
 	result.Exit()
 }
