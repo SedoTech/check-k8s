@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/benkeil/check-k8s/pkg/print"
+	icinga "github.com/benkeil/icinga-checks-library"
 
 	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/spf13/cobra"
@@ -29,18 +31,16 @@ func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
 		Short:        "check if a k8s deployment resource is healthy",
 		SilenceUsage: true,
 		Args:         NameArgs(),
-		PreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRun: func(cmd *cobra.Command, args []string) {
 			c.Name = args[0]
 			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
 			if err != nil {
-				return err
+				icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get deployment: %v", err)).Exit()
 			}
 			c.Deployment = deployment
-			return nil
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
 			c.run()
-			return nil
 		},
 	}
 	cmd.AddCommand(
@@ -51,6 +51,8 @@ func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
 	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "minimum of replicas in spec")
 	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "minimum of available replicas")
+	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "updateStrategyResult", "2:", "minimum of available replicas")
+	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "updateStrategyString", "2:", "minimum of available replicas")
 
 	cmd.MarkFlagRequired("namespace")
 

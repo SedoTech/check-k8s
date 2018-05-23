@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/benkeil/check-k8s/pkg/checks"
+	icinga "github.com/benkeil/icinga-checks-library"
 
 	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/spf13/cobra"
@@ -29,18 +31,16 @@ func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
 		Short:        "check if a k8s deployment has a minimum of available replicas",
 		SilenceUsage: true,
 		Args:         NameArgs(),
-		PreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRun: func(cmd *cobra.Command, args []string) {
 			c.Name = args[0]
 			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
 			if err != nil {
-				return err
+				icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get deployment: %v", err)).Exit()
 			}
 			c.Deployment = deployment
-			return nil
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
 			c.run()
-			return nil
 		},
 	}
 
