@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	"github.com/benkeil/check-k8s/pkg/print"
@@ -70,4 +71,14 @@ func exitServiceCheckResults(results icinga.Results) {
 		print.Printfln("%s:%s: %s", result.Name(), result.Status(), result.Message())
 	}
 	//os.Exit(results.CalculateServiceStatus().Ordinal())
+}
+
+// NameArgs returns an error if there are not exactly 1 arg containing the resource name.
+func NameArgs() cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("resource name is required")
+		}
+		return nil
+	}
 }

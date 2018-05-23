@@ -11,21 +11,21 @@ import (
 )
 
 type (
-	checkDeploymentAvailableReplicasCmd struct {
-		out               io.Writer
-		Deployment        *v1.Deployment
-		Name              string
-		Namespace         string
-		ThresholdWarning  string
-		ThresholdCritical string
+	checkDeploymentUpdateStrategyCmd struct {
+		out            io.Writer
+		Deployment     *v1.Deployment
+		Name           string
+		Namespace      string
+		ReturnStatus   string
+		UpdateStrategy string
 	}
 )
 
-func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
-	c := &checkDeploymentAvailableReplicasCmd{out: out}
+func newCheckDeploymentUpdateStrategyCmd(out io.Writer) *cobra.Command {
+	c := &checkDeploymentUpdateStrategyCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:          "availableReplicas",
+		Use:          "updateStrategy",
 		Short:        "check if a k8s deployment has a minimum of available replicas",
 		SilenceUsage: true,
 		Args:         NameArgs(),
@@ -45,14 +45,14 @@ func newCheckDeploymentAvailableReplicasCmd(out io.Writer) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
-	cmd.Flags().StringVarP(&c.ThresholdCritical, "critical", "c", "2:", "critical threshold for minimum available replicas")
-	cmd.Flags().StringVarP(&c.ThresholdWarning, "warning", "w", "2:", "warning threshold for minimum available replicas")
+	cmd.Flags().StringVarP(&c.ReturnStatus, "result", "r", "WARNING", "the result state if the check fails")
+	cmd.Flags().StringVarP(&c.UpdateStrategy, "string", "s", "RollingUpdate", "the expected update strategy")
 
 	return cmd
 }
 
-func (c *checkDeploymentAvailableReplicasCmd) run() {
+func (c *checkDeploymentUpdateStrategyCmd) run() {
 	checkDeployment := checks.NewCheckDeployment(c.Deployment)
-	result := checkDeployment.CheckAvailableReplicas(c.ThresholdWarning, c.ThresholdCritical)
+	result := checkDeployment.CheckUpdateStrategy(c.UpdateStrategy, c.ReturnStatus)
 	result.Exit()
 }

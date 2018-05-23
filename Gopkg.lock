@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/benkeil/icinga-checks-library"
+  packages = ["."]
+  revision = "b7b7999b2dde3560211b4741d5e42eab48dca6f1"
+
+[[projects]]
   name = "github.com/ghodss/yaml"
   packages = ["."]
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
@@ -113,7 +119,7 @@
     "http2/hpack",
     "idna"
   ]
-  revision = "57065200b4b034a1c8ad54ff77069408c2218ae6"
+  revision = "9ef9f5bb98a1fdc41f8cf6c250a4404b4085e389"
 
 [[projects]]
   branch = "master"
@@ -122,7 +128,7 @@
     "unix",
     "windows"
   ]
-  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+  revision = "88eb85aaee56831ad49eaf7aa80d73de9814cde2"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -196,7 +202,7 @@
     "storage/v1alpha1",
     "storage/v1beta1"
   ]
-  revision = "184e700b32b7f1b532b9fce8dd8c1f412d297c4b"
+  revision = "d216743eed4c3242b85d094d2a589f41a793652d"
 
 [[projects]]
   name = "k8s.io/apimachinery"
@@ -299,6 +305,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "32c6cbee52492dfb1f5bde170e9af618ac36e0ad7d51e96d733aba6817039cd6"
+  inputs-digest = "44a40d4e5416ebe080600f7800100b355511c8c83f1fdeda7cc29fbabe0275fa"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"io"
 
 	"github.com/benkeil/check-k8s/pkg/print"
@@ -29,10 +28,8 @@ func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
 		Use:          "deployment",
 		Short:        "check if a k8s deployment resource is healthy",
 		SilenceUsage: true,
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) != 1 {
-				return errors.New("deployment name is required")
-			}
+		Args:         NameArgs(),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
 			c.Name = args[0]
 			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
 			if err != nil {
@@ -48,6 +45,7 @@ func newCheckDeploymentCmd(out io.Writer) *cobra.Command {
 	}
 	cmd.AddCommand(
 		newCheckDeploymentAvailableReplicasCmd(out),
+		newCheckDeploymentUpdateStrategyCmd(out),
 	)
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
