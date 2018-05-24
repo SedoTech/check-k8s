@@ -1,8 +1,6 @@
 # check-k8s
 
-## Useful links
-
-- <http://nagios-plugins.org/doc/guidelines.html>
+The checks are mostly orientated by the offical nagios [guidelines](http://nagios-plugins.org/doc/guidelines.html)
 
 ## Default Flags
 

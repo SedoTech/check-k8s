@@ -52,6 +52,8 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 		newCheckDeploymentAvailableReplicasCmd(settings, out),
 		newCheckDeploymentUpdateStrategyCmd(settings, out),
 		newCheckDeploymentPodRestartsCmd(settings, out),
+		newCheckDeploymentProbesDefinedCmd(settings, out),
+		newCheckDeploymentContainerDefinedCmd(settings, out),
 	)
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")

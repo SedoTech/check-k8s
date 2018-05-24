@@ -14,22 +14,22 @@ import (
 )
 
 type (
-	checkDeploymentUpdateStrategyCmd struct {
-		out            io.Writer
-		Client         kubernetes.Interface
-		Name           string
-		Namespace      string
-		Result         string
-		UpdateStrategy string
+	checkDeploymentProbesDefinedCmd struct {
+		out           io.Writer
+		Client        kubernetes.Interface
+		Name          string
+		Namespace     string
+		Result        string
+		ProbesDefined []string
 	}
 )
 
-func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentUpdateStrategyCmd{out: out}
+func newCheckDeploymentProbesDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkDeploymentProbesDefinedCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:          "updateStrategy",
-		Short:        "check if a k8s deployment has a minimum of available replicas",
+		Use:          "probesDefined",
+		Short:        "check if a k8s deployment has liveness and readiness probes defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -47,17 +47,17 @@ func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out i
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
-	cmd.Flags().StringVarP(&c.UpdateStrategy, "string", "s", "RollingUpdate", "the expected update strategy")
+	cmd.Flags().StringArrayVarP(&c.ProbesDefined, "string", "s", []string{}, "check only the defined containers, not all")
 
 	return cmd
 }
 
-func (c *checkDeploymentUpdateStrategyCmd) run() {
+func (c *checkDeploymentProbesDefinedCmd) run() {
 	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckUpdateStrategy(
-		deployment.CheckUpdateStrategyOptions{
-			Result:         c.Result,
-			UpdateStrategy: c.UpdateStrategy,
+	result := checkDeployment.CheckProbesDefined(
+		deployment.CheckProbesDefinedOptions{
+			Result:        c.Result,
+			ProbesDefined: c.ProbesDefined,
 		})
 	result.Exit()
 }

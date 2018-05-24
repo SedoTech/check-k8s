@@ -14,22 +14,22 @@ import (
 )
 
 type (
-	checkDeploymentUpdateStrategyCmd struct {
-		out            io.Writer
-		Client         kubernetes.Interface
-		Name           string
-		Namespace      string
-		Result         string
-		UpdateStrategy string
+	checkDeploymentContainerDefinedCmd struct {
+		out              io.Writer
+		Client           kubernetes.Interface
+		Name             string
+		Namespace        string
+		Result           string
+		ContainerDefined []string
 	}
 )
 
-func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentUpdateStrategyCmd{out: out}
+func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkDeploymentContainerDefinedCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:          "updateStrategy",
-		Short:        "check if a k8s deployment has a minimum of available replicas",
+		Use:          "containerDefined",
+		Short:        "check if a k8s deployment has liveness and readiness probes defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -46,18 +46,18 @@ func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out i
 	}
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
-	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
-	cmd.Flags().StringVarP(&c.UpdateStrategy, "string", "s", "RollingUpdate", "the expected update strategy")
+	cmd.Flags().StringVarP(&c.Result, "result", "r", "CRITICAL", "the result state if the check fails")
+	cmd.Flags().StringArrayVarP(&c.ContainerDefined, "string", "s", []string{}, "the containers to check if they are present")
 
 	return cmd
 }
 
-func (c *checkDeploymentUpdateStrategyCmd) run() {
+func (c *checkDeploymentContainerDefinedCmd) run() {
 	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckUpdateStrategy(
-		deployment.CheckUpdateStrategyOptions{
-			Result:         c.Result,
-			UpdateStrategy: c.UpdateStrategy,
+	result := checkDeployment.CheckContainerDefined(
+		deployment.CheckContainerDefinedOptions{
+			Result:           c.Result,
+			ContainerDefined: c.ContainerDefined,
 		})
 	result.Exit()
 }

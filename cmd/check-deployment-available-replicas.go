@@ -54,6 +54,10 @@ func newCheckDeploymentAvailableReplicasCmd(settings environment.EnvSettings, ou
 
 func (c *checkDeploymentAvailableReplicasCmd) run() {
 	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckAvailableReplicas(deployment.CheckAvailableReplicasOptions{ThresholdWarning: c.ThresholdWarning, ThresholdCritical: c.ThresholdCritical})
+	result := checkDeployment.CheckAvailableReplicas(
+		deployment.CheckAvailableReplicasOptions{
+			ThresholdWarning:  c.ThresholdWarning,
+			ThresholdCritical: c.ThresholdCritical,
+		})
 	result.Exit()
 }
