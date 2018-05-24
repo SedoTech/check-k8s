@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/benkeil/icinga-checks-library"
   packages = ["."]
-  revision = "ebde7c17fbefbc300ad3f3a3ddc39cd7d53748e5"
+  revision = "8de16481c969d5e689ae7b234956f48578d6d4df"
 
 [[projects]]
   name = "github.com/ghodss/yaml"
@@ -107,7 +107,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "1a580b3eff7814fc9b40602fd35256c63b50f491"
+  revision = "159ae71589f303f9fbfd7528413e0fe944b9c1cb"
 
 [[projects]]
   branch = "master"
@@ -128,7 +128,7 @@
     "unix",
     "windows"
   ]
-  revision = "88eb85aaee56831ad49eaf7aa80d73de9814cde2"
+  revision = "04b83988a018ef3ebffe1485df79d6499b76a4b4"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -305,6 +305,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "44a40d4e5416ebe080600f7800100b355511c8c83f1fdeda7cc29fbabe0275fa"
+  inputs-digest = "3ed505fe39eb3800287a21242933fd428adf77a32545e0e59faf4f9c4d05de7c"
   solver-name = "gps-cdcl"
   solver-version = 1

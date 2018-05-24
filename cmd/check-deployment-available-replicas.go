@@ -6,17 +6,17 @@ import (
 
 	"github.com/benkeil/check-k8s/pkg/checks/deployment"
 	"github.com/benkeil/check-k8s/pkg/environment"
+	"github.com/benkeil/check-k8s/pkg/kube"
 	icinga "github.com/benkeil/icinga-checks-library"
+	"k8s.io/client-go/kubernetes"
 
-	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/spf13/cobra"
-	"k8s.io/api/apps/v1"
 )
 
 type (
 	checkDeploymentAvailableReplicasCmd struct {
 		out               io.Writer
-		Deployment        *v1.Deployment
+		Client            kubernetes.Interface
 		Name              string
 		Namespace         string
 		ThresholdWarning  string
@@ -34,11 +34,11 @@ func newCheckDeploymentAvailableReplicasCmd(settings environment.EnvSettings, ou
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
 			c.Name = args[0]
-			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+			client, err := kube.GetKubeClient(settings.KubeContext)
 			if err != nil {
-				icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get deployment: %v", err)).Exit()
+				icinga.NewResult("GetKubeClient", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get client: %v", err)).Exit()
 			}
-			c.Deployment = deployment
+			c.Client = client
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			c.run()
@@ -53,7 +53,7 @@ func newCheckDeploymentAvailableReplicasCmd(settings environment.EnvSettings, ou
 }
 
 func (c *checkDeploymentAvailableReplicasCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Deployment)
+	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
 	result := checkDeployment.CheckAvailableReplicas(deployment.CheckAvailableReplicasOptions{ThresholdWarning: c.ThresholdWarning, ThresholdCritical: c.ThresholdCritical})
 	result.Exit()
 }

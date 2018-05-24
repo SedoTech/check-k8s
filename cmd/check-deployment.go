@@ -6,29 +6,30 @@ import (
 
 	"github.com/benkeil/check-k8s/pkg/checks/deployment"
 	"github.com/benkeil/check-k8s/pkg/environment"
+	"github.com/benkeil/check-k8s/pkg/kube"
 	icinga "github.com/benkeil/icinga-checks-library"
 
-	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/spf13/cobra"
-	"k8s.io/api/apps/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 type (
 	checkDeploymentCmd struct {
-		Settings                  environment.EnvSettings
 		out                       io.Writer
-		Deployment                *v1.Deployment
+		Client                    kubernetes.Interface
 		Name                      string
 		Namespace                 string
 		AvailableReplicasWarning  string
 		AvailableReplicasCritical string
 		UpdateStrategyResult      string
 		UpdateStrategyValue       string
+		PodRestartsResult         string
+		PodRestartsDuration       string
 	}
 )
 
 func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentCmd{out: out, Settings: settings}
+	c := &checkDeploymentCmd{out: out}
 
 	cmd := &cobra.Command{
 		Use:          "deployment",
@@ -37,11 +38,11 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
 			c.Name = args[0]
-			deployment, err := api.GetDeployment(settings, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+			client, err := kube.GetKubeClient(settings.KubeContext)
 			if err != nil {
-				icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get deployment: %v", err)).Exit()
+				icinga.NewResult("GetKubeClient", icinga.ServiceStatusUnknown, fmt.Sprintf("can't get client: %v", err)).Exit()
 			}
-			c.Deployment = deployment
+			c.Client = client
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			c.run()
@@ -50,13 +51,16 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 	cmd.AddCommand(
 		newCheckDeploymentAvailableReplicasCmd(settings, out),
 		newCheckDeploymentUpdateStrategyCmd(settings, out),
+		newCheckDeploymentPodRestartsCmd(settings, out),
 	)
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
-	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "minimum of replicas in spec")
-	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "minimum of available replicas")
-	cmd.Flags().StringVar(&c.UpdateStrategyResult, "updateStrategyResult", "WARNING", "minimum of available replicas")
-	cmd.Flags().StringVar(&c.UpdateStrategyValue, "updateStrategyString", "RollingUpdate", "minimum of available replicas")
+	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "warning threshold for minimum available replicas")
+	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "critical threshold for minimum available replicas")
+	cmd.Flags().StringVar(&c.UpdateStrategyResult, "updateStrategyResult", "WARNING", "the result state if the updateStrategy check fails")
+	cmd.Flags().StringVar(&c.UpdateStrategyValue, "updateStrategyString", "RollingUpdate", "the expected update strategy")
+	cmd.Flags().StringVar(&c.PodRestartsResult, "podRestartsResult", "WARNING", "the result state if the podRestart check fails")
+	cmd.Flags().StringVar(&c.PodRestartsDuration, "podRestartsDuration", "15m", "the duration during the check looks for restarts")
 
 	cmd.MarkFlagRequired("namespace")
 
@@ -64,11 +68,20 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 }
 
 func (c *checkDeploymentCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Deployment)
+	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
 	results := checkDeployment.CheckAll(deployment.CheckAllOptions{
-		CheckAvailableReplicasOptions: deployment.CheckAvailableReplicasOptions{ThresholdWarning: c.AvailableReplicasWarning, ThresholdCritical: c.AvailableReplicasCritical},
-		CheckUpdateStrategyOptions:    deployment.CheckUpdateStrategyOptions{Result: c.UpdateStrategyResult, UpdateStrategy: c.UpdateStrategyValue},
-		CheckPodRestartsOptions:       deployment.CheckPodRestartsOptions{Settings: c.Settings, ThresholdWarning: c.UpdateStrategyResult, ThresholdCritical: c.UpdateStrategyValue},
+		CheckAvailableReplicasOptions: deployment.CheckAvailableReplicasOptions{
+			ThresholdWarning:  c.AvailableReplicasWarning,
+			ThresholdCritical: c.AvailableReplicasCritical,
+		},
+		CheckUpdateStrategyOptions: deployment.CheckUpdateStrategyOptions{
+			Result:         c.UpdateStrategyResult,
+			UpdateStrategy: c.UpdateStrategyValue,
+		},
+		CheckPodRestartsOptions: deployment.CheckPodRestartsOptions{
+			Result:   c.PodRestartsResult,
+			Duration: c.PodRestartsDuration,
+		},
 	})
 	results.Exit()
 }
