@@ -25,6 +25,11 @@ type (
 		UpdateStrategyValue       string
 		PodRestartsResult         string
 		PodRestartsDuration       string
+		ContainerDefinedResult    string
+		ContainerDefinedValue     []string
+		ProbesDefinedResult       string
+		ProbesDefinedValue        []string
+		Test                      []string
 	}
 )
 
@@ -60,10 +65,13 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "warning threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "critical threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.UpdateStrategyResult, "updateStrategyResult", "WARNING", "the result state if the updateStrategy check fails")
-	cmd.Flags().StringVar(&c.UpdateStrategyValue, "updateStrategyString", "RollingUpdate", "the expected update strategy")
+	cmd.Flags().StringVar(&c.UpdateStrategyValue, "updateStrategyValue", "RollingUpdate", "the expected update strategy")
 	cmd.Flags().StringVar(&c.PodRestartsResult, "podRestartsResult", "WARNING", "the result state if the podRestart check fails")
 	cmd.Flags().StringVar(&c.PodRestartsDuration, "podRestartsDuration", "15m", "the duration during the check looks for restarts")
-
+	cmd.Flags().StringVar(&c.ContainerDefinedResult, "containerDefinedResult", "CRITICAL", "the result state if the updateStrategy check fails")
+	cmd.Flags().StringSliceVar(&c.ContainerDefinedValue, "containerDefinedValue", []string{}, "check only the defined containers, not all")
+	cmd.Flags().StringVar(&c.ProbesDefinedResult, "probesDefinedResult", "WARNING", "the result state if the updateStrategy check fails")
+	cmd.Flags().StringSliceVar(&c.ProbesDefinedValue, "probesDefinedContainer", []string{}, "check only the defined containers, not all")
 	cmd.MarkFlagRequired("namespace")
 
 	return cmd
@@ -83,6 +91,14 @@ func (c *checkDeploymentCmd) run() {
 		CheckPodRestartsOptions: deployment.CheckPodRestartsOptions{
 			Result:   c.PodRestartsResult,
 			Duration: c.PodRestartsDuration,
+		},
+		CheckContainerDefinedOptions: deployment.CheckContainerDefinedOptions{
+			Result:           c.ContainerDefinedResult,
+			ContainerDefined: c.ContainerDefinedValue,
+		},
+		CheckProbesDefinedOptions: deployment.CheckProbesDefinedOptions{
+			Result:        c.ProbesDefinedResult,
+			ProbesDefined: c.ProbesDefinedValue,
 		},
 	})
 	results.Exit()

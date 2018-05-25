@@ -47,7 +47,7 @@ func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "CRITICAL", "the result state if the check fails")
-	cmd.Flags().StringArrayVarP(&c.ContainerDefined, "string", "s", []string{}, "the containers to check if they are present")
+	cmd.Flags().StringSliceVarP(&c.ContainerDefined, "string", "s", []string{}, "the containers to check if they are present")
 
 	return cmd
 }

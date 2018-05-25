@@ -47,7 +47,7 @@ func newCheckDeploymentProbesDefinedCmd(settings environment.EnvSettings, out io
 
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
-	cmd.Flags().StringArrayVarP(&c.ProbesDefined, "string", "s", []string{}, "check only the defined containers, not all")
+	cmd.Flags().StringSliceVarP(&c.ProbesDefined, "string", "s", []string{}, "check only the defined containers, not all")
 
 	return cmd
 }

@@ -42,6 +42,8 @@ type CheckAllOptions struct {
 	CheckUpdateStrategyOptions    CheckUpdateStrategyOptions
 	CheckAvailableReplicasOptions CheckAvailableReplicasOptions
 	CheckPodRestartsOptions       CheckPodRestartsOptions
+	CheckProbesDefinedOptions     CheckProbesDefinedOptions
+	CheckContainerDefinedOptions  CheckContainerDefinedOptions
 }
 
 // CheckAll runs all tests and returns an instance of ServiceCheckResults
@@ -50,6 +52,8 @@ func (c *checkDeploymentImpl) CheckAll(options CheckAllOptions) icinga.Results {
 	results.Add(c.CheckUpdateStrategy(options.CheckUpdateStrategyOptions))
 	results.Add(c.CheckAvailableReplicas(options.CheckAvailableReplicasOptions))
 	results.Add(c.CheckPodRestarts(options.CheckPodRestartsOptions))
+	results.Add(c.CheckProbesDefined(options.CheckProbesDefinedOptions))
+	results.Add(c.CheckContainerDefined(options.CheckContainerDefinedOptions))
 	return results
 }
 
@@ -230,7 +234,8 @@ func (c *checkDeploymentImpl) CheckContainerDefined(options CheckContainerDefine
 	name := "Deployment.ContainerDefined"
 
 	if len(options.ContainerDefined) == 0 {
-		return icinga.NewResultUnknownMessage(name, fmt.Sprint("no containers defined to check"))
+		panic("no containers defined to check")
+		//return icinga.NewResultUnknownMessage(name, fmt.Sprint("no containers defined to check"))
 	}
 
 	statusCheck, err := icinga.NewStatusCheckCompare(options.Result)
