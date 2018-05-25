@@ -29,7 +29,7 @@ func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out
 
 	cmd := &cobra.Command{
 		Use:          "containerDefined",
-		Short:        "check if a k8s deployment has liveness and readiness probes defined",
+		Short:        "check if a k8s deployment has a list of containers defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {

@@ -29,7 +29,7 @@ func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out i
 
 	cmd := &cobra.Command{
 		Use:          "updateStrategy",
-		Short:        "check if a k8s deployment has a minimum of available replicas",
+		Short:        "check if a k8s deployment has a specific update strategy defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {

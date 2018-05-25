@@ -29,7 +29,7 @@ func newCheckDeploymentPodRestartsCmd(settings environment.EnvSettings, out io.W
 
 	cmd := &cobra.Command{
 		Use:          "podRestarts",
-		Short:        "check if a k8s deployment has a no pod restarts",
+		Short:        "check if a k8s deployment has no pod restarts",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
