@@ -73,7 +73,7 @@ func (c *checkDeploymentImpl) CheckUpdateStrategy(options CheckUpdateStrategyOpt
 	case "Recreate":
 		updateStretegy = v1.RecreateDeploymentStrategyType
 	default:
-		panic("invalid v1.DeploymentStrategyType")
+		icinga.NewResult("CheckUpdateStrategy", icinga.ServiceStatusUnknown, fmt.Sprintf("invalid DeploymentStrategy: %v", options.UpdateStrategy)).Exit()
 	}
 
 	statusCheck, err := icinga.NewStatusCheckCompare(options.Result)
@@ -116,7 +116,7 @@ func (c *checkDeploymentImpl) CheckAvailableReplicas(options CheckAvailableRepli
 
 	replicas := deployment.Status.AvailableReplicas
 	status := statusCheck.CheckInt32(replicas)
-	message := fmt.Sprintf("deployment has %v available replica(s) [thresholds warn: %v crit: %v]", replicas, options.ThresholdWarning, options.ThresholdCritical)
+	message := fmt.Sprintf("deployment has %v available replica(s)", replicas)
 
 	return icinga.NewResult(name, status, message)
 }
@@ -234,8 +234,7 @@ func (c *checkDeploymentImpl) CheckContainerDefined(options CheckContainerDefine
 	name := "Deployment.ContainerDefined"
 
 	if len(options.ContainerDefined) == 0 {
-		panic("no containers defined to check")
-		//return icinga.NewResultUnknownMessage(name, fmt.Sprint("no containers defined to check"))
+		return icinga.NewResultUnknownMessage(name, fmt.Sprint("no containers defined to check"))
 	}
 
 	statusCheck, err := icinga.NewStatusCheckCompare(options.Result)

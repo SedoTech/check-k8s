@@ -42,6 +42,7 @@ func newRootCmd(args []string) *cobra.Command {
 	cmd.AddCommand(
 		// check commands
 		newCheckDeploymentCmd(settings, out),
+		newCheckEndpointsCmd(settings, out),
 	)
 
 	return cmd

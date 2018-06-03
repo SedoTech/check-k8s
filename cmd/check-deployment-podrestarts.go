@@ -48,6 +48,7 @@ func newCheckDeploymentPodRestartsCmd(settings environment.EnvSettings, out io.W
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
 	cmd.Flags().StringVarP(&c.Duration, "duration", "d", "15m", "warning threshold for minimum available replicas")
+	cmd.MarkPersistentFlagRequired("namespace")
 
 	return cmd
 }

@@ -61,7 +61,7 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 		newCheckDeploymentContainerDefinedCmd(settings, out),
 	)
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace where the deployment is")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "warning threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "critical threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.UpdateStrategyResult, "updateStrategyResult", "WARNING", "the result state if the updateStrategy check fails")
@@ -72,7 +72,7 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 	cmd.Flags().StringSliceVar(&c.ContainerDefinedValue, "containerDefinedValue", []string{}, "check only the defined containers, not all")
 	cmd.Flags().StringVar(&c.ProbesDefinedResult, "probesDefinedResult", "WARNING", "the result state if the updateStrategy check fails")
 	cmd.Flags().StringSliceVar(&c.ProbesDefinedValue, "probesDefinedContainer", []string{}, "check only the defined containers, not all")
-	cmd.MarkFlagRequired("namespace")
+	cmd.MarkPersistentFlagRequired("namespace")
 
 	return cmd
 }

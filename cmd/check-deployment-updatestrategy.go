@@ -48,6 +48,7 @@ func newCheckDeploymentUpdateStrategyCmd(settings environment.EnvSettings, out i
 	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
 	cmd.Flags().StringVarP(&c.UpdateStrategy, "string", "s", "RollingUpdate", "the expected update strategy")
+	cmd.MarkPersistentFlagRequired("namespace")
 
 	return cmd
 }

@@ -20,7 +20,7 @@ var deployments = make(map[string]*v1.Deployment)
 
 // GetDeployment returns a new checkDeployment object
 func GetDeployment(client kubernetes.Interface, options GetDeploymentOptions) (*v1.Deployment, error) {
-	key := fmt.Sprintf("%s-%s", options.Name, options.Name)
+	key := fmt.Sprintf("%s-%s", options.Name, options.Namespace)
 	if deployment, found := deployments[key]; found {
 		return deployment, nil
 	}
