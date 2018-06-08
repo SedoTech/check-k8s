@@ -17,7 +17,7 @@ The checks are mostly orientated by the offical nagios [guidelines](http://nagio
 
 <https://nagios-plugins.org/doc/guidelines.html#THRESHOLDFORMAT>
 
-| Range definition |	Generate an alert if x... |
+| Range definition | Generate an alert if x... |
 | -- | -- |
 | 10 | < 0 or > 10, (outside the range of {0 .. 10}) |
 | 10: | < 10, (outside {10 .. ∞}) |

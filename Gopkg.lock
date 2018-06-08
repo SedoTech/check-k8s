@@ -3,9 +3,66 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/Redundancy/go-sync"
+  packages = [
+    ".",
+    "blocksources",
+    "chunks",
+    "circularbuffer",
+    "comparer",
+    "filechecksum",
+    "index",
+    "indexbuilder",
+    "patcher",
+    "patcher/sequential",
+    "rollsum"
+  ]
+  revision = "8931874cad5cacc627b94fcbcb182460e174aeef"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/alecthomas/template"
+  packages = [
+    ".",
+    "parse"
+  ]
+  revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/alecthomas/units"
+  packages = ["."]
+  revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
+
+[[projects]]
+  branch = "master"
   name = "github.com/benkeil/icinga-checks-library"
   packages = ["."]
   revision = "08535c513b97756e9ae60d4e617aad55d9cb9c04"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/chrislusf/glow"
+  packages = [
+    ".",
+    "agent",
+    "driver",
+    "driver/cmd",
+    "driver/plan",
+    "driver/rsync",
+    "driver/scheduler",
+    "driver/scheduler/market",
+    "flow",
+    "netchan",
+    "netchan/receiver",
+    "netchan/sender",
+    "netchan/store",
+    "resource",
+    "resource/service_discovery/client",
+    "resource/service_discovery/master",
+    "util"
+  ]
+  revision = "1121db486076a62840ab82fe4a282564c92cb8f7"
 
 [[projects]]
   name = "github.com/ghodss/yaml"
@@ -93,6 +150,18 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/petar/GoLLRB"
+  packages = ["llrb"]
+  revision = "53be0d36a84c2a886ca057d34b6aa4468df9ccb4"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/psilva261/timsort"
+  packages = ["."]
+  revision = "4537dc9bd679bfb730b72f2e8c33b46676521337"
+
+[[projects]]
+  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "1e58aa3361fd650121dceeedc399e7189c05674a"
@@ -156,6 +225,12 @@
   name = "golang.org/x/time"
   packages = ["rate"]
   revision = "fbb02b2291d28baffd63558aa44b4b56f178d650"
+
+[[projects]]
+  name = "gopkg.in/alecthomas/kingpin.v2"
+  packages = ["."]
+  revision = "947dcec5ba9c011838740e680966fd7087a71d0d"
+  version = "v2.2.6"
 
 [[projects]]
   name = "gopkg.in/inf.v0"
@@ -305,6 +380,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3ed505fe39eb3800287a21242933fd428adf77a32545e0e59faf4f9c4d05de7c"
+  inputs-digest = "cd2e2400566f99d9c227f01ef54a46364c47cdfa9a125e00e3c706171d4e602c"
   solver-name = "gps-cdcl"
   solver-version = 1

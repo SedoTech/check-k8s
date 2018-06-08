@@ -57,7 +57,7 @@ func (c *checkEndpointsImpl) CheckAvailableAddresses(options CheckAvailableAddre
 
 	endpoints, err := api.GetEndpoints(c.Client, api.GetEndpointsOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResult("GetEndpoints", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get service: %v", err))
+		return icinga.NewResult("GetEndpoints", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get endpoint: %v", err))
 	}
 
 	if len(endpoints.Subsets) != 1 {
@@ -66,7 +66,7 @@ func (c *checkEndpointsImpl) CheckAvailableAddresses(options CheckAvailableAddre
 
 	addresses := len(endpoints.Subsets[0].Addresses)
 	status := statusCheck.CheckInt(addresses)
-	message := fmt.Sprintf("endpoint has %v available addresses(s)", addresses)
+	message := fmt.Sprintf("endpoint has %v available address(ess)", addresses)
 
 	return icinga.NewResult(name, status, message)
 }

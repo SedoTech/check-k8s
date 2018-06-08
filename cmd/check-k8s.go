@@ -27,7 +27,7 @@ func newRootCmd(args []string) *cobra.Command {
 		Short:        "check-k8s checks if a k8s resource is healthy",
 		Long:         globalUsage,
 		Version:      version,
-		SilenceUsage: true,
+		SilenceUsage: false,
 	}
 
 	settings.AddFlags(cmd.PersistentFlags())
@@ -43,6 +43,8 @@ func newRootCmd(args []string) *cobra.Command {
 		// check commands
 		newCheckDeploymentCmd(settings, out),
 		newCheckEndpointsCmd(settings, out),
+		newCheckSecretsCmd(settings, out),
+		newCheckConfigMapsCmd(settings, out),
 	)
 
 	return cmd
