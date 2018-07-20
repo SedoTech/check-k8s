@@ -45,6 +45,8 @@ func newRootCmd(args []string) *cobra.Command {
 		newCheckEndpointsCmd(settings, out),
 		newCheckSecretsCmd(settings, out),
 		newCheckConfigMapsCmd(settings, out),
+		newCheckCronjobCmd(settings, out),
+		newCheckCronjobStatusCmd(settings, out),
 	)
 
 	return cmd
