@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"runtime"
 
 	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
@@ -26,7 +27,7 @@ func newRootCmd(args []string) *cobra.Command {
 		Use:          "check-k8s",
 		Short:        "check-k8s checks if a k8s resource is healthy",
 		Long:         globalUsage,
-		Version:      version,
+		Version:      version + " (" + runtime.Version() + ")",
 		SilenceUsage: false,
 	}
 
@@ -42,6 +43,7 @@ func newRootCmd(args []string) *cobra.Command {
 	cmd.AddCommand(
 		// check commands
 		newCheckDeploymentCmd(settings, out),
+		newCheckStatefulSetCmd(settings, out),
 		newCheckEndpointsCmd(settings, out),
 		newCheckSecretsCmd(settings, out),
 		newCheckConfigMapsCmd(settings, out),

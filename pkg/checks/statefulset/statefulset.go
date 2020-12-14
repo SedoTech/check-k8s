@@ -1,4 +1,4 @@
-package deployment
+package statefulset
 
 import (
 	"bytes"
@@ -14,8 +14,8 @@ import (
 )
 
 type (
-	// CheckDeployment interface to check a deployment
-	CheckDeployment interface {
+	// CheckStatefulSet interface to check a StatefulSet
+	CheckStatefulSet interface {
 		CheckUpdateStrategy(CheckUpdateStrategyOptions) icinga.Result
 		CheckAvailableReplicas(CheckAvailableReplicasOptions) icinga.Result
 		CheckPodRestarts(CheckPodRestartsOptions) icinga.Result
@@ -24,19 +24,19 @@ type (
 		CheckAll(CheckAllOptions) icinga.Results
 	}
 
-	checkDeploymentImpl struct {
+	checkStatefulSetImpl struct {
 		Client    kubernetes.Interface
 		Name      string
 		Namespace string
 	}
 )
 
-// NewCheckDeployment creates a new instance of CheckDeployment
-func NewCheckDeployment(client kubernetes.Interface, name string, namespace string) CheckDeployment {
-	return &checkDeploymentImpl{Client: client, Name: name, Namespace: namespace}
+// NewCheckStatefulSet creates a new instance of CheckStatefulSet
+func NewCheckStatefulSet(client kubernetes.Interface, name string, namespace string) CheckStatefulSet {
+	return &checkStatefulSetImpl{Client: client, Name: name, Namespace: namespace}
 }
 
-// CheckAllOptions contains options needed to run all deployment checks
+// CheckAllOptions contains options needed to run all StatefulSet checks
 type CheckAllOptions struct {
 	Client                        kubernetes.Interface
 	CheckUpdateStrategyOptions    CheckUpdateStrategyOptions
@@ -47,7 +47,7 @@ type CheckAllOptions struct {
 }
 
 // CheckAll runs all tests and returns an instance of ServiceCheckResults
-func (c *checkDeploymentImpl) CheckAll(options CheckAllOptions) icinga.Results {
+func (c *checkStatefulSetImpl) CheckAll(options CheckAllOptions) icinga.Results {
 	results := icinga.NewResults()
 	results.Add(c.CheckUpdateStrategy(options.CheckUpdateStrategyOptions))
 	results.Add(c.CheckAvailableReplicas(options.CheckAvailableReplicasOptions))
@@ -63,17 +63,17 @@ type CheckUpdateStrategyOptions struct {
 	UpdateStrategy string
 }
 
-// CheckUpdateStrategy checks if the deployment has the RollingUpdate strategy
-func (c *checkDeploymentImpl) CheckUpdateStrategy(options CheckUpdateStrategyOptions) icinga.Result {
-	name := "Deployment.UpdateStrategy"
-	var updateStretegy v1.DeploymentStrategyType
+// CheckUpdateStrategy checks if the StatefulSet has the RollingUpdate strategy
+func (c *checkStatefulSetImpl) CheckUpdateStrategy(options CheckUpdateStrategyOptions) icinga.Result {
+	name := "StatefulSet.UpdateStrategy"
+	var updateStrategy v1.StatefulSetUpdateStrategyType
 	switch options.UpdateStrategy {
 	case "RollingUpdate":
-		updateStretegy = v1.RollingUpdateDeploymentStrategyType
-	case "Recreate":
-		updateStretegy = v1.RecreateDeploymentStrategyType
+		updateStrategy = v1.RollingUpdateStatefulSetStrategyType
+	case "OnDelete":
+		updateStrategy = v1.OnDeleteStatefulSetStrategyType
 	default:
-		icinga.NewResult("CheckUpdateStrategy", icinga.ServiceStatusUnknown, fmt.Sprintf("invalid DeploymentStrategy: %v", options.UpdateStrategy)).Exit()
+		icinga.NewResult("CheckUpdateStrategy", icinga.ServiceStatusUnknown, fmt.Sprintf("invalid StatefulSetStrategy: %v", options.UpdateStrategy)).Exit()
 	}
 
 	statusCheck, err := icinga.NewStatusCheckCompare(options.Result)
@@ -81,17 +81,17 @@ func (c *checkDeploymentImpl) CheckUpdateStrategy(options CheckUpdateStrategyOpt
 		return icinga.NewResult(name, icinga.ServiceStatusUnknown, fmt.Sprintf("can't compare status: %v", err))
 	}
 
-	deployment, err := api.GetDeployment(c.Client, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+	statefulSet, err := api.GetStatefulSet(c.Client, api.GetStatefulSetOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResult("GetStatefulSet", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
 	comparator := func() bool {
-		return updateStretegy != deployment.Spec.Strategy.Type
+		return updateStrategy != statefulSet.Spec.UpdateStrategy.Type
 	}
 	status := statusCheck.Compare(comparator)
 
-	return icinga.NewResult(name, status, fmt.Sprintf("deployment has update strategy %s", updateStretegy))
+	return icinga.NewResult(name, status, fmt.Sprintf("StatefulSet has update strategy %s", updateStrategy))
 }
 
 // CheckAvailableReplicasOptions contains options needed to run CheckAvailableReplicas check
@@ -100,23 +100,23 @@ type CheckAvailableReplicasOptions struct {
 	ThresholdCritical string
 }
 
-// CheckAvailableReplicas checks if the deployment has a minimum of available replicas
-func (c *checkDeploymentImpl) CheckAvailableReplicas(options CheckAvailableReplicasOptions) icinga.Result {
-	name := "Deployment.AvailableReplicas"
+// CheckAvailableReplicas checks if the StatefulSet has a minimum of available replicas
+func (c *checkStatefulSetImpl) CheckAvailableReplicas(options CheckAvailableReplicasOptions) icinga.Result {
+	name := "StatefulSet.AvailableReplicas"
 
 	statusCheck, err := icinga.NewStatusCheck(options.ThresholdWarning, options.ThresholdCritical)
 	if err != nil {
 		return icinga.NewResult(name, icinga.ServiceStatusUnknown, fmt.Sprintf("can't check status: %v", err))
 	}
 
-	deployment, err := api.GetDeployment(c.Client, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+	statefulSet, err := api.GetStatefulSet(c.Client, api.GetStatefulSetOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResult("GetStatefulSet", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
-	replicas := deployment.Status.AvailableReplicas
+	replicas := statefulSet.Status.ReadyReplicas
 	status := statusCheck.CheckInt32(replicas)
-	message := fmt.Sprintf("deployment has %v available replica(s)", replicas)
+	message := fmt.Sprintf("StatefulSet has %v available replica(s)", replicas)
 
 	return icinga.NewResult(name, status, message)
 }
@@ -127,18 +127,18 @@ type CheckPodRestartsOptions struct {
 	Duration string
 }
 
-// CheckPodRestarts checks if the deployment has a minimum of available replicas
-func (c *checkDeploymentImpl) CheckPodRestarts(options CheckPodRestartsOptions) icinga.Result {
-	name := "Deployment.PodRestarts"
+// CheckPodRestarts checks if the StatefulSet has a minimum of available replicas
+func (c *checkStatefulSetImpl) CheckPodRestarts(options CheckPodRestartsOptions) icinga.Result {
+	name := "StatefulSet.PodRestarts"
 
-	deployment, err := api.GetDeployment(c.Client, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+	statefulSet, err := api.GetStatefulSet(c.Client, api.GetStatefulSetOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResultUnknownMessage("GetDeployment", fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResultUnknownMessage("GetStatefulSet", fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
-	podList, err := api.GetPods(c.Client, api.GetPodOptions{LabelSelector: deployment.Spec.Selector})
+	podList, err := api.GetPods(c.Client, api.GetPodOptions{LabelSelector: statefulSet.Spec.Selector})
 	if err != nil {
-		return icinga.NewResultUnknownMessage("GetPods", fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResultUnknownMessage("GetPods", fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
 	duration, err := time.ParseDuration(options.Duration)
@@ -191,22 +191,22 @@ type CheckProbesDefinedOptions struct {
 	ProbesDefined []string
 }
 
-// CheckProbesDefined checks if the deployment has the RollingUpdate strategy
-func (c *checkDeploymentImpl) CheckProbesDefined(options CheckProbesDefinedOptions) icinga.Result {
-	name := "Deployment.ProbesDefined"
+// CheckProbesDefined checks if the StatefulSet has the RollingUpdate strategy
+func (c *checkStatefulSetImpl) CheckProbesDefined(options CheckProbesDefinedOptions) icinga.Result {
+	name := "StatefulSet.ProbesDefined"
 
 	statusCheck, err := icinga.NewStatusCheckCompare(options.Result)
 	if err != nil {
 		return icinga.NewResult(name, icinga.ServiceStatusUnknown, fmt.Sprintf("can't compare status: %v", err))
 	}
 
-	deployment, err := api.GetDeployment(c.Client, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+	statefulSet, err := api.GetStatefulSet(c.Client, api.GetStatefulSetOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResult("GetDeployment", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResult("GetStatefulSet", icinga.ServiceStatusUnknown, fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
 	missingProbes := []string{}
-	for _, container := range deployment.Spec.Template.Spec.Containers {
+	for _, container := range statefulSet.Spec.Template.Spec.Containers {
 		if (len(options.ProbesDefined) > 0 && utils.Contains(container.Name, options.ProbesDefined)) || len(options.ProbesDefined) == 0 {
 			if container.ReadinessProbe == nil || container.LivenessProbe == nil {
 				missingProbes = append(missingProbes, container.Name)
@@ -229,9 +229,9 @@ type CheckContainerDefinedOptions struct {
 	ContainerDefined []string
 }
 
-// CheckContainerDefined checks if the deployment has the RollingUpdate strategy
-func (c *checkDeploymentImpl) CheckContainerDefined(options CheckContainerDefinedOptions) icinga.Result {
-	name := "Deployment.ContainerDefined"
+// CheckContainerDefined checks if the StatefulSet has the RollingUpdate strategy
+func (c *checkStatefulSetImpl) CheckContainerDefined(options CheckContainerDefinedOptions) icinga.Result {
+	name := "StatefulSet.ContainerDefined"
 
 	if len(options.ContainerDefined) == 0 {
 		return icinga.NewResultUnknownMessage(name, fmt.Sprint("no containers defined to check"))
@@ -242,9 +242,9 @@ func (c *checkDeploymentImpl) CheckContainerDefined(options CheckContainerDefine
 		return icinga.NewResultUnknownMessage(name, fmt.Sprintf("can't compare status: %v", err))
 	}
 
-	deployment, err := api.GetDeployment(c.Client, api.GetDeploymentOptions{Name: c.Name, Namespace: c.Namespace})
+	statefulSet, err := api.GetStatefulSet(c.Client, api.GetStatefulSetOptions{Name: c.Name, Namespace: c.Namespace})
 	if err != nil {
-		return icinga.NewResultUnknownMessage("GetDeployment", fmt.Sprintf("cant't get deployment: %v", err))
+		return icinga.NewResultUnknownMessage("GetStatefulSet", fmt.Sprintf("cant't get StatefulSet: %v", err))
 	}
 
 	foundContainers := make(map[string]bool)
@@ -252,7 +252,7 @@ func (c *checkDeploymentImpl) CheckContainerDefined(options CheckContainerDefine
 		foundContainers[container] = false
 	}
 
-	for _, container := range deployment.Spec.Template.Spec.Containers {
+	for _, container := range statefulSet.Spec.Template.Spec.Containers {
 		if utils.Contains(container.Name, options.ContainerDefined) {
 			foundContainers[container.Name] = true
 		}
