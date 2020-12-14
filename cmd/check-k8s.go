@@ -5,8 +5,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/benkeil/check-k8s/pkg/environment"
 	"github.com/spf13/cobra"
+	"SedoTech/check-k8s/pkg/environment"
 )
 
 var (

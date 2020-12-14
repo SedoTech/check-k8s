@@ -2,16 +2,16 @@ package api
 
 import (
 	"fmt"
+	"k8s.io/api/batch/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/api/batch/v1"
 )
 
 type (
 	// GetJobOptions options to get a job
 	GetJobOptions struct {
-		Name               string
-		Namespace          string
+		Name      string
+		Namespace string
 	}
 )
 

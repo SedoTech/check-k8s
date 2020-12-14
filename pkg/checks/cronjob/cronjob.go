@@ -2,12 +2,12 @@ package deployment
 
 import (
 	"fmt"
-	"github.com/benkeil/check-k8s/cmd/api"
 	"github.com/benkeil/icinga-checks-library"
+	"k8s.io/api/batch/v1"
 	"k8s.io/client-go/kubernetes"
+	"SedoTech/check-k8s/pkg/checks/api"
 	"strings"
 	"time"
-	"k8s.io/api/batch/v1"
 )
 
 type (
@@ -17,11 +17,10 @@ type (
 	}
 
 	checkCronjobImpl struct {
-		Client             kubernetes.Interface
-		Name               string
-		Namespace          string
+		Client    kubernetes.Interface
+		Name      string
+		Namespace string
 	}
-
 )
 
 // NewCheckCronjob creates a new instance of CheckCronjob
@@ -30,7 +29,7 @@ func NewCheckCronjob(client kubernetes.Interface, name string, namespace string)
 }
 
 // CheckStatusOptions contains options needed to run CheckStatus check
-type CheckStatusOptions struct {}
+type CheckStatusOptions struct{}
 
 // CheckStatus checks if the cronjob is running properly
 func (c *checkCronjobImpl) CheckStatus(options CheckStatusOptions) icinga.Result {

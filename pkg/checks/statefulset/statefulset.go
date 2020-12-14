@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/benkeil/check-k8s/cmd/api"
-	"github.com/benkeil/check-k8s/pkg/utils"
 	"github.com/benkeil/icinga-checks-library"
 	"k8s.io/api/apps/v1"
 	"k8s.io/client-go/kubernetes"
+	"SedoTech/check-k8s/pkg/checks/api"
+	"SedoTech/check-k8s/pkg/utils"
 )
 
 type (

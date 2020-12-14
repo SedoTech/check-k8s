@@ -35,7 +35,13 @@ The checks are mostly orientated by the offical nagios [guidelines](http://nagio
   ```go get -u github.com/golang/dep/cmd/dep```
 - Delve [https://github.com/go-delve/delve] (Optional for debugging)
 `go get github.com/go-delve/delve/cmd/dlv`
+
+- Make sure go can access the source code as `sedo.com/check-k8s` package. 
   
+By default go searches the source under `$GOPATH/src/` which is `$HOME/go` by default
+
+So cloning the project into `$HOME/go/src/sedo.com/check-k8s` should work in most cases
+
 ## Update/Install dependencies
 
 Before you can compile the package you need to make sure required libraries are available locally
@@ -43,12 +49,12 @@ Before you can compile the package you need to make sure required libraries are 
 - `dep ensure`                             install the project's dependencies
 - `dep ensure -update`                     update the locked versions of all dependencies
 
-This will create `vendor` derectory and put them all there
+This will create `vendor` directory and put them all there
 
 ## Compile executable
 
 - Build final binary  
-  `scripts/build.sh 1.8.4` will create ./check-k8s executable binary with version 1.8.4
+  `scripts/build.sh 1.8.4` will create `build/check-k8s` executable binary with version 1.8.4
   
 - Run some checks
   `./check-k8s statefulset --kube-context integration --namespace integration-infrastructure availableReplicas trading-queue`
