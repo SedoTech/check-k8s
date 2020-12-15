@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	"github.com/spf13/cobra"
-	"SedoTech/check-k8s/pkg/environment"
+	"github.com/SedoTech/check-k8s/pkg/environment"
 )
 
 var (

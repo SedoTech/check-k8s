@@ -5,7 +5,7 @@ import (
 
 	"github.com/SedoTech/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
-	"SedoTech/check-k8s/pkg/checks/api"
+	"github.com/SedoTech/check-k8s/pkg/checks/api"
 )
 
 type (

@@ -40,12 +40,12 @@
 
 [[constraint]]
   name = "k8s.io/apimachinery"
-  version = "~0.17"
+  version = "kubernetes-1.17.5"
 
 ## cf. https://github.com/kubernetes/client-go/blob/master/INSTALL.md#user-content-add-client-go-as-a-dependency
 [[constraint]]
   name = "k8s.io/client-go"
-  version = "~0.17"
+  version = "kubernetes-1.17.5"
 
 ## workaround for project to compile
 [[override]]

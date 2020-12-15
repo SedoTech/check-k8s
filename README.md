@@ -40,7 +40,7 @@ The checks are mostly orientated by the offical nagios [guidelines](http://nagio
   
 By default go searches the source under `$GOPATH/src/` which is `$HOME/go` by default
 
-So cloning the project into `$HOME/go/src/SedoTech/check-k8s` should work in most cases
+So cloning the project into `$HOME/go/src/github.com/SedoTech/check-k8s` should work in most cases.
 
 ## Update/Install dependencies
 

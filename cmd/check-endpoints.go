@@ -5,9 +5,9 @@ import (
 	"io"
 
 	icinga "github.com/SedoTech/icinga-checks-library"
-	"SedoTech/check-k8s/pkg/checks/endpoints"
-	"SedoTech/check-k8s/pkg/environment"
-	"SedoTech/check-k8s/pkg/kube"
+	"github.com/SedoTech/check-k8s/pkg/checks/endpoints"
+	"github.com/SedoTech/check-k8s/pkg/environment"
+	"github.com/SedoTech/check-k8s/pkg/kube"
 
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/kubernetes"

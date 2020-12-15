@@ -5,9 +5,9 @@ import (
 	"github.com/SedoTech/icinga-checks-library"
 	"io"
 	"k8s.io/client-go/kubernetes"
-	cronjob "SedoTech/check-k8s/pkg/checks/cronjob"
-	"SedoTech/check-k8s/pkg/environment"
-	"SedoTech/check-k8s/pkg/kube"
+	cronjob "github.com/SedoTech/check-k8s/pkg/checks/cronjob"
+	"github.com/SedoTech/check-k8s/pkg/environment"
+	"github.com/SedoTech/check-k8s/pkg/kube"
 
 	"github.com/spf13/cobra"
 )
