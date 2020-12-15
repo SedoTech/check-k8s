@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/benkeil/icinga-checks-library"
+	"github.com/SedoTech/icinga-checks-library"
 	"github.com/spf13/cobra"
 	"io"
 	"k8s.io/client-go/kubernetes"

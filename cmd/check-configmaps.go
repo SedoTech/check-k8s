@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	icinga "github.com/benkeil/icinga-checks-library"
+	icinga "github.com/SedoTech/icinga-checks-library"
 	"SedoTech/check-k8s/pkg/checks/configmaps"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"

@@ -16,4 +16,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.0.1] - 2018-05-26
 
-* Initial version with support of main k8s resources 
+* Initial version with support of main k8s resources

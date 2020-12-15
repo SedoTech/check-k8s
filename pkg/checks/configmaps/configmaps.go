@@ -3,7 +3,7 @@ package configmaps
 import (
 	"fmt"
 
-	"github.com/benkeil/icinga-checks-library"
+	"github.com/SedoTech/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
 	"SedoTech/check-k8s/pkg/checks/api"
 	"SedoTech/check-k8s/pkg/utils"

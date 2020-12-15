@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	icinga "github.com/benkeil/icinga-checks-library"
+	icinga "github.com/SedoTech/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
 	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"

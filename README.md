@@ -40,7 +40,7 @@ The checks are mostly orientated by the offical nagios [guidelines](http://nagio
   
 By default go searches the source under `$GOPATH/src/` which is `$HOME/go` by default
 
-So cloning the project into `$HOME/go/src/sedo.com/check-k8s` should work in most cases
+So cloning the project into `$HOME/go/src/SedoTech/check-k8s` should work in most cases
 
 ## Update/Install dependencies
 
@@ -63,8 +63,9 @@ This will create `vendor` directory and put them all there
 ### Debug locally using Intellij
 
 - Compile with debug flags
-`go build -gcflags "all=-N -l" -o check-k8s cmd/*.go`
+  `go build -gcflags "all=-N -l" -o check-k8s cmd/*.go`
 - Start script with debug wrapper 
   `dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./check-k8s -- statefulset --kube-context integration --namespace integration-infrastructure availableReplicas trading-queue` 
 - Create Run configuration in Intellij using `Go Remote` template
 - Start the created configuration
+
