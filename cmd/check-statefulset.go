@@ -5,7 +5,7 @@ import (
 	"io"
 
 	icinga "github.com/benkeil/icinga-checks-library"
-	"SedoTech/check-k8s/pkg/checks/deployment"
+	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	checkDeploymentCmd struct {
+	checkStatefulSetCmd struct {
 		out                       io.Writer
 		Client                    kubernetes.Interface
 		Name                      string
@@ -33,12 +33,12 @@ type (
 	}
 )
 
-func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentCmd{out: out}
+func newCheckStatefulSetCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkStatefulSetCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:          "deployment",
-		Short:        "check if a k8s deployment resource is healthy",
+		Use:          "statefulset",
+		Short:        "check if a k8s StatefulSet resource is healthy",
 		SilenceUsage: false,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -54,14 +54,14 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 		},
 	}
 	cmd.AddCommand(
-		newCheckDeploymentAvailableReplicasCmd(settings, out),
-		newCheckDeploymentUpdateStrategyCmd(settings, out),
-		newCheckDeploymentPodRestartsCmd(settings, out),
-		newCheckDeploymentProbesDefinedCmd(settings, out),
-		newCheckDeploymentContainerDefinedCmd(settings, out),
+		newCheckStatefulSetAvailableReplicasCmd(settings, out),
+		newCheckStatefulSetUpdateStrategyCmd(settings, out),
+		newCheckStatefulSetPodRestartsCmd(settings, out),
+		newCheckStatefulSetProbesDefinedCmd(settings, out),
+		newCheckStatefulSetContainerDefinedCmd(settings, out),
 	)
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the StatefulSet")
 	cmd.Flags().StringVar(&c.AvailableReplicasWarning, "availableReplicasWarning", "2:", "warning threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.AvailableReplicasCritical, "availableReplicasCritical", "2:", "critical threshold for minimum available replicas")
 	cmd.Flags().StringVar(&c.UpdateStrategyResult, "updateStrategyResult", "WARNING", "the result state if the updateStrategy check fails")
@@ -77,26 +77,26 @@ func newCheckDeploymentCmd(settings environment.EnvSettings, out io.Writer) *cob
 	return cmd
 }
 
-func (c *checkDeploymentCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	results := checkDeployment.CheckAll(deployment.CheckAllOptions{
-		CheckAvailableReplicasOptions: deployment.CheckAvailableReplicasOptions{
+func (c *checkStatefulSetCmd) run() {
+	checkStatefulSet := statefulset.NewCheckStatefulSet(c.Client, c.Name, c.Namespace)
+	results := checkStatefulSet.CheckAll(statefulset.CheckAllOptions{
+		CheckAvailableReplicasOptions: statefulset.CheckAvailableReplicasOptions{
 			ThresholdWarning:  c.AvailableReplicasWarning,
 			ThresholdCritical: c.AvailableReplicasCritical,
 		},
-		CheckUpdateStrategyOptions: deployment.CheckUpdateStrategyOptions{
+		CheckUpdateStrategyOptions: statefulset.CheckUpdateStrategyOptions{
 			Result:         c.UpdateStrategyResult,
 			UpdateStrategy: c.UpdateStrategyValue,
 		},
-		CheckPodRestartsOptions: deployment.CheckPodRestartsOptions{
+		CheckPodRestartsOptions: statefulset.CheckPodRestartsOptions{
 			Result:   c.PodRestartsResult,
 			Duration: c.PodRestartsDuration,
 		},
-		CheckContainerDefinedOptions: deployment.CheckContainerDefinedOptions{
+		CheckContainerDefinedOptions: statefulset.CheckContainerDefinedOptions{
 			Result:           c.ContainerDefinedResult,
 			ContainerDefined: c.ContainerDefinedValue,
 		},
-		CheckProbesDefinedOptions: deployment.CheckProbesDefinedOptions{
+		CheckProbesDefinedOptions: statefulset.CheckProbesDefinedOptions{
 			Result:        c.ProbesDefinedResult,
 			ProbesDefined: c.ProbesDefinedValue,
 		},

@@ -6,7 +6,7 @@ import (
 
 	icinga "github.com/benkeil/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
-	"SedoTech/check-k8s/pkg/checks/deployment"
+	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	checkDeploymentProbesDefinedCmd struct {
+	checkStatefulSetProbesDefinedCmd struct {
 		out           io.Writer
 		Client        kubernetes.Interface
 		Name          string
@@ -24,12 +24,12 @@ type (
 	}
 )
 
-func newCheckDeploymentProbesDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentProbesDefinedCmd{out: out}
+func newCheckStatefulSetProbesDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkStatefulSetProbesDefinedCmd{out: out}
 
 	cmd := &cobra.Command{
 		Use:          "probesDefined",
-		Short:        "check if a k8s deployment has liveness and readiness probes defined",
+		Short:        "check if a k8s StatefulSet has liveness and readiness probes defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -45,7 +45,7 @@ func newCheckDeploymentProbesDefinedCmd(settings environment.EnvSettings, out io
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the StatefulSet")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
 	cmd.Flags().StringSliceVarP(&c.ProbesDefined, "string", "s", []string{}, "check only the defined containers, not all")
 	cmd.MarkPersistentFlagRequired("namespace")
@@ -53,10 +53,10 @@ func newCheckDeploymentProbesDefinedCmd(settings environment.EnvSettings, out io
 	return cmd
 }
 
-func (c *checkDeploymentProbesDefinedCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckProbesDefined(
-		deployment.CheckProbesDefinedOptions{
+func (c *checkStatefulSetProbesDefinedCmd) run() {
+	checkStatefulSet := statefulset.NewCheckStatefulSet(c.Client, c.Name, c.Namespace)
+	result := checkStatefulSet.CheckProbesDefined(
+		statefulset.CheckProbesDefinedOptions{
 			Result:        c.Result,
 			ProbesDefined: c.ProbesDefined,
 		})

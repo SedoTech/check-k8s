@@ -6,7 +6,7 @@ import (
 
 	icinga "github.com/benkeil/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
-	"SedoTech/check-k8s/pkg/checks/deployment"
+	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	checkDeploymentPodRestartsCmd struct {
+	checkStatefulSetPodRestartsCmd struct {
 		out       io.Writer
 		Client    kubernetes.Interface
 		Name      string
@@ -24,12 +24,12 @@ type (
 	}
 )
 
-func newCheckDeploymentPodRestartsCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentPodRestartsCmd{out: out}
+func newCheckStatefulSetPodRestartsCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkStatefulSetPodRestartsCmd{out: out}
 
 	cmd := &cobra.Command{
 		Use:          "podRestarts DEPLOYMENT",
-		Short:        "check if a k8s deployment has no pod restarts",
+		Short:        "check if a k8s StatefulSet has no pod restarts",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -45,7 +45,7 @@ func newCheckDeploymentPodRestartsCmd(settings environment.EnvSettings, out io.W
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the StatefulSet")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "WARNING", "the result state if the check fails")
 	cmd.Flags().StringVarP(&c.Duration, "duration", "d", "15m", "which duration we want to check for restarts")
 	cmd.MarkPersistentFlagRequired("namespace")
@@ -53,10 +53,10 @@ func newCheckDeploymentPodRestartsCmd(settings environment.EnvSettings, out io.W
 	return cmd
 }
 
-func (c *checkDeploymentPodRestartsCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckPodRestarts(
-		deployment.CheckPodRestartsOptions{
+func (c *checkStatefulSetPodRestartsCmd) run() {
+	checkStatefulSet := statefulset.NewCheckStatefulSet(c.Client, c.Name, c.Namespace)
+	result := checkStatefulSet.CheckPodRestarts(
+		statefulset.CheckPodRestartsOptions{
 			Duration: c.Duration,
 			Result:   c.Result,
 		})

@@ -12,4 +12,5 @@
 *.out
 
 vendor/
+build/
 check-k8s

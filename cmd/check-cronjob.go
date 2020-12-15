@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
-	"io"
-	cronjob "github.com/benkeil/check-k8s/pkg/checks/cronjob"
-	"github.com/benkeil/check-k8s/pkg/environment"
-	"github.com/benkeil/check-k8s/pkg/kube"
 	"github.com/benkeil/icinga-checks-library"
 	"github.com/spf13/cobra"
+	"io"
 	"k8s.io/client-go/kubernetes"
+	cronjob "SedoTech/check-k8s/pkg/checks/cronjob"
+	"SedoTech/check-k8s/pkg/environment"
+	"SedoTech/check-k8s/pkg/kube"
 )
 
 type (
 	checkCronjobCmd struct {
-		out                io.Writer
-		Client             kubernetes.Interface
-		Name               string
-		Namespace          string
+		out       io.Writer
+		Client    kubernetes.Interface
+		Name      string
+		Namespace string
 	}
 )
 

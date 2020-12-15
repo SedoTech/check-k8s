@@ -6,7 +6,7 @@ import (
 
 	icinga "github.com/benkeil/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
-	"SedoTech/check-k8s/pkg/checks/endpoints"
+	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	checkEndpointsAvailableAddressesCmd struct {
+	checkStatefulSetAvailableReplicasCmd struct {
 		out               io.Writer
 		Client            kubernetes.Interface
 		Name              string
@@ -24,12 +24,12 @@ type (
 	}
 )
 
-func newCheckEndpointsAvailableAddressesCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkEndpointsAvailableAddressesCmd{out: out}
+func newCheckStatefulSetAvailableReplicasCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkStatefulSetAvailableReplicasCmd{out: out}
 
 	cmd := &cobra.Command{
-		Use:          "availableAddresses",
-		Short:        "check if a k8s deployment has a minimum of available replicas",
+		Use:          "availableReplicas",
+		Short:        "check if a k8s StatefulSet has a minimum of available replicas",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -45,18 +45,18 @@ func newCheckEndpointsAvailableAddressesCmd(settings environment.EnvSettings, ou
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the endpoint")
-	cmd.Flags().StringVarP(&c.ThresholdWarning, "warning", "w", "2:", "warning threshold for minimum available addresses")
-	cmd.Flags().StringVarP(&c.ThresholdCritical, "critical", "c", "1:", "critical threshold for minimum available addresses")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the StatefulSet")
+	cmd.Flags().StringVarP(&c.ThresholdCritical, "critical", "c", "2:", "critical threshold for minimum available replicas")
+	cmd.Flags().StringVarP(&c.ThresholdWarning, "warning", "w", "2:", "warning threshold for minimum available replicas")
 	cmd.MarkPersistentFlagRequired("namespace")
 
 	return cmd
 }
 
-func (c *checkEndpointsAvailableAddressesCmd) run() {
-	checkEndpoints := endpoints.NewCheckEndpoints(c.Client, c.Name, c.Namespace)
-	result := checkEndpoints.CheckAvailableAddresses(
-		endpoints.CheckAvailableAddressesOptions{
+func (c *checkStatefulSetAvailableReplicasCmd) run() {
+	checkStatefulSet := statefulset.NewCheckStatefulSet(c.Client, c.Name, c.Namespace)
+	result := checkStatefulSet.CheckAvailableReplicas(
+		statefulset.CheckAvailableReplicasOptions{
 			ThresholdWarning:  c.ThresholdWarning,
 			ThresholdCritical: c.ThresholdCritical,
 		})

@@ -6,7 +6,7 @@ import (
 
 	icinga "github.com/benkeil/icinga-checks-library"
 	"k8s.io/client-go/kubernetes"
-	"SedoTech/check-k8s/pkg/checks/deployment"
+	"SedoTech/check-k8s/pkg/checks/statefulset"
 	"SedoTech/check-k8s/pkg/environment"
 	"SedoTech/check-k8s/pkg/kube"
 
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	checkDeploymentContainerDefinedCmd struct {
+	checkStatefulSetContainerDefinedCmd struct {
 		out              io.Writer
 		Client           kubernetes.Interface
 		Name             string
@@ -24,12 +24,12 @@ type (
 	}
 )
 
-func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
-	c := &checkDeploymentContainerDefinedCmd{out: out}
+func newCheckStatefulSetContainerDefinedCmd(settings environment.EnvSettings, out io.Writer) *cobra.Command {
+	c := &checkStatefulSetContainerDefinedCmd{out: out}
 
 	cmd := &cobra.Command{
 		Use:          "containerDefined",
-		Short:        "check if a k8s deployment has a list of containers defined",
+		Short:        "check if a k8s StatefulSet has a list of containers defined",
 		SilenceUsage: true,
 		Args:         NameArgs(),
 		PreRun: func(cmd *cobra.Command, args []string) {
@@ -45,7 +45,7 @@ func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the deployment")
+	cmd.PersistentFlags().StringVarP(&c.Namespace, "namespace", "n", "", "the namespace of the StatefulSet")
 	cmd.Flags().StringVarP(&c.Result, "result", "r", "CRITICAL", "the result state if the check fails")
 	cmd.Flags().StringSliceVarP(&c.ContainerDefined, "string", "s", []string{}, "the containers to check if they are present (comma separated list)")
 	cmd.MarkPersistentFlagRequired("namespace")
@@ -53,10 +53,10 @@ func newCheckDeploymentContainerDefinedCmd(settings environment.EnvSettings, out
 	return cmd
 }
 
-func (c *checkDeploymentContainerDefinedCmd) run() {
-	checkDeployment := deployment.NewCheckDeployment(c.Client, c.Name, c.Namespace)
-	result := checkDeployment.CheckContainerDefined(
-		deployment.CheckContainerDefinedOptions{
+func (c *checkStatefulSetContainerDefinedCmd) run() {
+	checkStatefulSet := statefulset.NewCheckStatefulSet(c.Client, c.Name, c.Namespace)
+	result := checkStatefulSet.CheckContainerDefined(
+		statefulset.CheckContainerDefinedOptions{
 			Result:           c.Result,
 			ContainerDefined: c.ContainerDefined,
 		})
