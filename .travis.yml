@@ -52,13 +52,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-- provider: s3
-  region: "eu-central-1"
-  bucket: ${AWS_S3_BUCKET}
-  access_key_id: ${AWS_ACCESS_KEY}
-  secret_access_key: ${AWS_ACCESS_SECRET}
-  local_dir: build
-  skip_cleanup: true
-  on:
-    tags: true
 
