@@ -36,7 +36,6 @@ before_script:
 
 script:
 - echo " >>> Building ${OUTPUT_NAME}"
-- go test -race -covermode=atomic ./...
 - env CGO_ENABLED=0 GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} go build -a -installsuffix cgo -x -ldflags "-X main.version=${APP_VERSION}" -o ${OUTPUT_NAME} cmd/*.go
 - tar -cvzf ${OUTPUT_NAME}.tar.gz ${OUTPUT_NAME}
 
