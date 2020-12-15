@@ -1,29 +1,30 @@
-# Gopkg.toml example
-#
-# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
-# for detailed Gopkg.toml documentation.
-#
-# required = ["github.com/user/thing/cmd/thing"]
-# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
-#
-# [[constraint]]
-#   name = "github.com/user/project"
-#   version = "1.0.0"
-#
-# [[constraint]]
-#   name = "github.com/user/project2"
-#   branch = "dev"
-#   source = "github.com/myfork/project2"
-#
-# [[override]]
-#   name = "github.com/x/y"
-#   version = "2.4.0"
-#
-# [prune]
-#   non-go = false
-#   go-tests = true
-#   unused-packages = true
-
+##
+## Gopkg.toml example
+##
+## Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+## for detailed Gopkg.toml documentation.
+##
+## required = ["github.com/user/thing/cmd/thing"]
+## ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+##
+## [[constraint]]
+##   name = "github.com/user/project"
+##   version = "1.0.0"
+##
+## [[constraint]]
+##   name = "github.com/user/project2"
+##   branch = "dev"
+##   source = "github.com/myfork/project2"
+##
+## [[override]]
+##   name = "github.com/x/y"
+##   version = "2.4.0"
+##
+## [prune]
+##   non-go = false
+##   go-tests = true
+##   unused-packages = true
+##
 
 [prune]
   go-tests = true
@@ -34,19 +35,25 @@
   branch = "master"
 
 [[constraint]]
-  name = "github.com/benkeil/icinga-checks-library"
+  name = "github.com/SedoTech/icinga-checks-library"
   branch = "master"
-
-[[override]]
-  name = "github.com/imdario/mergo"
-  revision = "6633656539c1639d9d78127b7d47c622b5d7b6dc"
 
 [[constraint]]
   name = "k8s.io/apimachinery"
-  version = "kubernetes-1.10.0"
-  #branch = "master"
+  version = "~0.17"
 
+## cf. https://github.com/kubernetes/client-go/blob/master/INSTALL.md#user-content-add-client-go-as-a-dependency
 [[constraint]]
   name = "k8s.io/client-go"
-  version = "7.0.0"
-  #branch = "master"
+  version = "~0.17"
+
+## workaround for project to compile
+[[override]]
+  name = "k8s.io/klog"
+  version = "0.4.0"
+
+## workaround for project to compile
+# [[constraint]]
+#   name = "github.com/imdario/mergo"
+#   revision = "6633656539c1639d9d78127b7d47c622b5d7b6dc"
+

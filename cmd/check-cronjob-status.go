@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/benkeil/icinga-checks-library"
+	"github.com/SedoTech/icinga-checks-library"
 	"io"
 	"k8s.io/client-go/kubernetes"
 	cronjob "SedoTech/check-k8s/pkg/checks/cronjob"
