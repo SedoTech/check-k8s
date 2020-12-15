@@ -37,7 +37,7 @@ before_script:
 script:
 - echo " >>> Building ${OUTPUT_NAME}"
 - go test -race -covermode=atomic ./...
-- env CGO_ENABLED=0 GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} go build -a -installsuffix cgo -x -ldflags "-X main.version=${APP_VERSION}" -o build/${OUTPUT_NAME} cmd/*.go
+- env CGO_ENABLED=0 GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} go build -a -installsuffix cgo -x -ldflags "-X main.version=${APP_VERSION}" -o ${OUTPUT_NAME} cmd/*.go
 - tar -cvzf ${OUTPUT_NAME}.tar.gz ${OUTPUT_NAME}
 
 after_success:
@@ -45,8 +45,8 @@ after_success:
 - bash <( curl -s https://codecov.io/bash ) -t ${CODECOV_TOKEN}
 
 before_deploy:
-- shasum -a 256 ${OUTPUT_NAME}.tar.gz
-- mkdir -p build/${TRAVIS_TAG} && shasum -a 256 ${OUTPUT_NAME}.tar.gz | awk '{print $1}' > build/${TRAVIS_TAG}/${OUTPUT_NAME}.tar.gz.sha265
+- mkdir -p build/${TRAVIS_TAG}
+- shasum -a 256 ${OUTPUT_NAME}.tar.gz | awk '{print $1}' > build/${TRAVIS_TAG}/${OUTPUT_NAME}.tar.gz.sha265
 
 deploy:
 - provider: releases
