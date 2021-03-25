@@ -31,13 +31,13 @@ The checks are mostly orientated by the offical nagios [guidelines](http://nagio
 ## Requirements
 
 - Go [https://golang.org/dl/]
-- Dep [https://github.com/golang/dep] 
+- Dep [https://github.com/golang/dep]
   ```go get -u github.com/golang/dep/cmd/dep```
 - Delve [https://github.com/go-delve/delve] (Optional for debugging)
-`go get github.com/go-delve/delve/cmd/dlv`
+  `go get github.com/go-delve/delve/cmd/dlv`
 
-- Make sure go can access the source code as `sedo.com/check-k8s` package. 
-  
+- Make sure go can access the source code as `SedoTech/check-k8s` package.
+
 By default go searches the source under `$GOPATH` which is `$HOME/go` by default
 
 So cloning the project into `$HOME/go/src/github.com/SedoTech/check-k8s` should work in most cases.
@@ -53,9 +53,9 @@ This will create `vendor` directory and put them all there
 
 ## Compile executable
 
-- Build final binary  
+- Build final binary
   `scripts/build.sh 1.8.4` will create `build/check-k8s` executable binary with version 1.8.4
-  
+
 - Run some checks
   `./check-k8s statefulset --kube-context integration --namespace integration-infrastructure availableReplicas trading-queue`
 
@@ -64,8 +64,8 @@ This will create `vendor` directory and put them all there
 
 - Compile with debug flags
   `go build -gcflags "all=-N -l" -o check-k8s cmd/*.go`
-- Start script with debug wrapper 
-  `dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./check-k8s -- statefulset --kube-context integration --namespace integration-infrastructure availableReplicas trading-queue` 
+- Start script with debug wrapper
+  `dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./check-k8s -- statefulset --kube-context integration --namespace integration-infrastructure availableReplicas trading-queue`
 - Create Run configuration in Intellij using `Go Remote` template
 - Start the created configuration
 
